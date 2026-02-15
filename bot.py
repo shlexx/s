@@ -6,6 +6,19 @@ import random
 import requests
 import xml.etree.ElementTree as ET
 
+proxy_list = [
+    "http://hkspqckn:s8m6txvkrgxy@31.59.20.176:6754",
+    "http://hkspqckn:s8m6txvkrgxy@23.95.150.145:6114",
+    "http://hkspqckn:s8m6txvkrgxy@198.23.239.134:6540",
+	"http://hkspqckn:s8m6txvkrgxy@45.38.107.97:6014",
+	"http://hkspqckn:s8m6txvkrgxy@107.172.163.27:6543",
+	"http://hkspqckn:s8m6txvkrgxy@198.105.121.200:6462",
+	"http://hkspqckn:s8m6txvkrgxy@64.137.96.74:6641",
+	"http://hkspqckn:s8m6txvkrgxy@216.10.27.159:6837",
+	"http://hkspqckn:s8m6txvkrgxy@23.26.71.145:5628",
+	"http://hkspqckn:s8m6txvkrgxy@23.229.19.94:8689",
+]
+
 # --- Bot Initialization ---
 class MyBot(discord.Client):
     def __init__(self):
@@ -91,18 +104,23 @@ async def fatheriwishtogoon(
     final_url = final_url.replace("xxx//", "xxx/")
     final_url = final_url.replace("api.rule34", "rule34")
 
-    proxies = {
-        "http": "http://138.99.94.51:8080", 
-        "https": "http://138.99.94.51:8080"
-    }
-
     try:
-        # 2. Pass the proxy into the request
-        response = requests.get(final_url, headers=headers, proxies=proxies, timeout=10)
+    # Pick a random proxy from your new list
+        chosen_proxy = random.choice(proxy_list)
         
-        if response.status_code == 403:
-             await interaction.followup.send("Proxy was also blocked. Try a different one!", ephemeral=private)
-             return
+        proxies = {
+            "http": chosen_proxy,
+            "https": chosen_proxy
+        }
+    
+        # Send the request with the proxy and a timeout to prevent hanging
+        response = requests.get(final_url, headers=headers, proxies=proxies, timeout=15)
+    
+        if response.status_code == 200:
+            print(f"DEBUG: Search successful using proxy {chosen_proxy.split('@')[-1]}")
+        else:
+            print(f"DEBUG: Proxy returned status {response.status_code}")
+        
 
         print(f"DEBUG FINAL URL: {response.url}")
         # ... the rest of your code ...
