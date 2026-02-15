@@ -2,6 +2,7 @@ import discord
 import os
 from discord import app_commands
 from discord.ext import commands
+from keep_alive import keep_alive
 
 # 1. Setup Intents
 intents = discord.Intents.default()
@@ -23,5 +24,6 @@ async def hello(interaction: discord.Interaction):
     await interaction.response.send_message(f"https://cdn.discordapp.com/attachments/1374010242093809674/1472571622656577598/attachment.gif")
 
 # 2. Get the token from Secrets
+keep_alive()
 token = os.environ['DISCORD_TOKEN']
 bot.run(token)
