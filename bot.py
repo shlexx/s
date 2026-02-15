@@ -91,11 +91,23 @@ async def fatheriwishtogoon(
     final_url = final_url.replace("xxx//", "xxx/")
     final_url = final_url.replace("api.rule34", "rule34")
 
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+    # Use a realistic browser header to avoid being blocked
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+    }
 
     try:
+        # Added the headers here
         response = requests.get(final_url, headers=headers, timeout=10)
+        
+        # Check if the website actually blocked us
+        if response.status_code == 403:
+            print("ERROR: Blocked by the thingy (403 Forbidden)")
+            await interaction.followup.send("The heavens are closed to us right now (Blocked). Try again in a few minutes.", ephemeral=private)
+            return
+
         print(f"DEBUG FINAL URL: {response.url}")
+        # ... the rest of your code ...
 
         root = ET.fromstring(response.text)
         posts = root.findall('post')
