@@ -37,6 +37,8 @@ client = MyBot()
 
 # --- RULE34 SEARCH COMMAND ---
 @client.tree.command(name="fatheriwishtogoon", description="Search the realm")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def search(interaction: discord.Interaction, tags: str):
     await interaction.response.defer()
     
@@ -68,15 +70,21 @@ async def search(interaction: discord.Interaction, tags: str):
 # --- NEW MERGED COMMANDS ---
 
 @client.tree.command(name="fatheriwishtoflip", description="father i wish to flip")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def fatheriwishtoflip(interaction: discord.Interaction):
     await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/boom.gif")
 
 @client.tree.command(name="fatheriwishtogamble", description="get a random number")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def fatheriwishtogamble(interaction: discord.Interaction, minimum: int, maximum: int):
     result = random.randint(minimum, maximum)
     await interaction.response.send_message(f"your random number is **{result}**")
 
 @client.tree.command(name="fatheriwishtodecide", description="choose between paths")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def fatheriwishtodecide(
     interaction: discord.Interaction, 
     pick1: str, pick2: str, 
