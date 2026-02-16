@@ -75,7 +75,7 @@ async def predict(interaction: discord.Interaction, question: str):
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def fatheriwishtomeinkampf(interaction: discord.Interaction):
-    await interaction.response.send_message("https://doom.p2r3.com/i.webp")
+    await interaction.response.send_message("send this in chat:\n```https://doom.p2r3.com/i.webp```")
 
 # Start systems
 keep_alive()
