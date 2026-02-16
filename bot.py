@@ -32,6 +32,12 @@ async def fatheriwishtoflip(interaction: discord.Interaction):
 async def fatheriwishtouber(interaction: discord.Interaction):
     await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/uber.gif")
 
+@client.tree.command(name="fatheriwishtomeinkampf", description="father i wish to meinkampf")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtomeinkampf(interaction: discord.Interaction):
+    await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/meinkampf.webp")
+
 @client.tree.command(name="fatheriwishtogamble", description="get a random number")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
