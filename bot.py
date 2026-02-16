@@ -71,6 +71,12 @@ async def predict(interaction: discord.Interaction, question: str):
     # sending everything in lowercase as requested
     await interaction.response.send_message(f"question: {question.lower()}\nthe heavens say: {answer}")
 
+@client.tree.command(name="fatheriwishtodoom", description="father i wish to doom")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtomeinkampf(interaction: discord.Interaction):
+    await interaction.response.send_message("https://doom.p2r3.com/i.webp")
+
 # Start systems
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
