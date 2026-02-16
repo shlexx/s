@@ -35,37 +35,50 @@ class MyBot(discord.Client):
 
 client = MyBot()
 
-# --- RULE34 SEARCH COMMAND ---
 @client.tree.command(name="fatheriwishtogoon", description="Search the realm")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def search(interaction: discord.Interaction, tags: str):
     await interaction.response.defer()
     
+    # Randomize page and clean tags
+    random_page = random.randint(0, 50)
     tags_string = tags.replace(" ", "_")
-    final_url = f"https://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=100&tags={tags_string}"
+    final_url = f"https://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=100&tags={tags_string}&pid={random_page}&json=1"
     
     # URL SCRUBBER
-    final_url = final_url.replace("xxx//", "xxx/").replace("api.rule34", "rule34")
-
+    final_url = final_url.replace("api.rule34", "rule34").replace("xxx//", "xxx/")
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-    chosen_proxy = random.choice(proxy_list)
-    proxies = {"http": chosen_proxy, "https": chosen_proxy}
 
-    try:
-        response = requests.get(final_url, headers=headers, proxies=proxies, timeout=15)
-        if response.status_code == 200:
-            root = ET.fromstring(response.content)
-            posts = root.findall('post')
-            if not posts:
-                await interaction.followup.send("The realm is empty for these tags.")
-                return
-            post = random.choice(posts)
-            await interaction.followup.send(post.get('file_url'))
-        else:
-            await interaction.followup.send(f"The realm is unreachable (Status: {response.status_code}).")
-    except Exception as e:
-        await interaction.followup.send("A connection error occurred. Try again!")
+    max_retries = 3  # How many times to try different proxies
+    for attempt in range(max_retries):
+        chosen_proxy = random.choice(proxy_list)
+        proxies = {"http": chosen_proxy, "https": chosen_proxy}
+        
+        try:
+            # Short timeout so we don't wait too long for a bad proxy
+            response = requests.get(final_url, headers=headers, proxies=proxies, timeout=10)
+            
+            # If successful (200) and we got data
+            if response.status_code == 200:
+                data = response.json()
+                if data:
+                    post = random.choice(data)
+                    await interaction.followup.send(post['file_url'])
+                    return  # EXIT the function immediately on success!
+                else:
+                    # If data is empty, the tags might just have no results
+                    await interaction.followup.send("The heavens are empty for those tags.")
+                    return
+
+            # If we get a 403 or 429, the loop continues and tries a NEW proxy
+            print(f"Attempt {attempt+1} failed with status {response.status_code}. Retrying...")
+            
+        except Exception as e:
+            print(f"Attempt {attempt+1} error: {e}")
+            # If it's the last attempt, tell the user
+            if attempt == max_retries - 1:
+                await interaction.followup.send("The realm is currently shielded. Try again in a minute.")
 
 # --- NEW MERGED COMMANDS ---
 
