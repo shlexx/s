@@ -1,6 +1,7 @@
 import discord
 from discord import app_commands
 import os
+import random
 from keep_alive import keep_alive
 
 class MyBot(discord.Client):
@@ -57,7 +58,7 @@ async def fatheriwishtodecide(
 @client.tree.command(name="fatheriwishtopredict", description="ask the heavens a question")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def predict(interaction: discord.Interaction, question: str):
+async def fatheriwishtopredict(interaction: discord.Interaction, question: str):
     responses = [
         "yes.",
         "no.",
