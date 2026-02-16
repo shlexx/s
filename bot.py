@@ -83,6 +83,12 @@ async def fatheriwishtomeinkampf(interaction: discord.Interaction):
 async def fatheriwishtosummonkimjongun(interaction: discord.Interaction):
     await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/kju.png")
 
+@client.tree.command(name="fatheriwishtodprk", description="father i wish to dprk")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtodprk(interaction: discord.Interaction):
+    await interaction.response.send_message("||https://open.spotify.com/playlist/2I0vVElTzPQxfdyhE5Otc3?si=e34d9fd7e33c4bf2||")
+
 # Start systems
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
