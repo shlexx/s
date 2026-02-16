@@ -50,6 +50,24 @@ async def fatheriwishtodecide(
     all_picks = [p for p in [pick1, pick2, pick3, pick4, pick5] if p is not None]
     await interaction.response.send_message(f"the heavens have spoken: **{random.choice(all_picks)}**")
 
+# --- PREDICT / 8-BALL COMMAND ---
+@client.tree.command(name="fatheriwishtopredict", description="ask the heavens a question")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def predict(interaction: discord.Interaction, question: str):
+    responses = [
+        "yes.",
+        "no.",
+        "maybe.",
+        "maybe not.",
+        "i don't know."
+    ]
+    
+    answer = random.choice(responses)
+    
+    # sending everything in lowercase as requested
+    await interaction.response.send_message(f"question: {question.lower()}\nthe heavens say: {answer}")
+
 # Start systems
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
