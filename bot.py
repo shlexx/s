@@ -1,9 +1,6 @@
 import discord
 from discord import app_commands
-import requests
-import random
 import os
-import xml.etree.ElementTree as ET
 from keep_alive import keep_alive
 
 class MyBot(discord.Client):
