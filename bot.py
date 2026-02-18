@@ -90,6 +90,12 @@ async def fatheriwishtosummonkimjongun(interaction: discord.Interaction):
 async def fatheriwishtodprk(interaction: discord.Interaction):
     await interaction.response.send_message("||https://open.spotify.com/playlist/2I0vVElTzPQxfdyhE5Otc3?si=e34d9fd7e33c4bf2||")
 
+@client.tree.command(name="fatheriwishtoleave", description="father i wish to leave")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtoleave(interaction: discord.Interaction):
+    await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/leave.gif")
+
 # Start systems
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
