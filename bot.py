@@ -102,6 +102,24 @@ async def fatheriwishtoleave(interaction: discord.Interaction):
 async def fatheriwishtothrowit(interaction: discord.Interaction):
     await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/irony.gif")
 
+@client.tree.command(name="fatheriwishtoapolocheese", description="father i wish to apolocheese")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtoapolocheese(interaction: discord.Interaction):
+    await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/cheese.gif")
+
+@client.tree.command(name="fatheriwishtovanish", description="father i wish to vanish")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtovanish(interaction: discord.Interaction):
+    await interaction.response.send_message("_ _")
+
+@client.tree.command(name="fatheriwishtomessage", description="father i wish to message")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtothrowit(interaction: discord.Interaction, message: str, private: bool = False):
+    await interaction.response.send_message(message, ephemeral=private)
+
 # Start systems
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
