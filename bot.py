@@ -96,6 +96,12 @@ async def fatheriwishtodprk(interaction: discord.Interaction):
 async def fatheriwishtoleave(interaction: discord.Interaction):
     await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/leave.gif")
 
+@client.tree.command(name="fatheriwishtothrowit", description="father i wish to throw it")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtothrowit(interaction: discord.Interaction):
+    await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/irony.gif")
+
 # Start systems
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
