@@ -152,6 +152,12 @@ async def fatheriwishtoreceivekeys(
         keys.append(res)
     await interaction.response.send_message(f"```\n{chr(10).join(keys)}\n```", ephemeral=True)
 
+@client.tree.command(name="inshallahiwishtobomb", description="inshallah i wish to bomb")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def inshallahiwishtobomb(interaction: discord.Interaction):
+    await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/hover.gif")
+
 # Start systems
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
