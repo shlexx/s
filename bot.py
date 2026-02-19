@@ -2,6 +2,7 @@ import discord
 from discord import app_commands
 import os
 import random
+import string
 from keep_alive import keep_alive
 
 class MyBot(discord.Client):
@@ -117,8 +118,16 @@ async def fatheriwishtovanish(interaction: discord.Interaction):
 @client.tree.command(name="fatheriwishtomessage", description="father i wish to message")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def fatheriwishtothrowit(interaction: discord.Interaction, message: str, private: bool = False):
+async def fatheriwishtomessage(interaction: discord.Interaction, message: str, private: bool = False):
     await interaction.response.send_message(message, ephemeral=private)
+
+@client.tree.command(name="fatheriwishtoreceiveakey", description="father i wish to receive a key")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtoreceiveakey(interaction: discord.Interaction):
+    chars = "qwertyuiopasdfghjklzcvbnmQWERTYUIOPASDFGHJKLZCVBNM1234567890"
+    random_str = ''.join(random.choice(chars) for _ in range(length))
+    await interaction.response.send_message(f"your key:\n`{random_str}`", ephemeral=True)
 
 # Start systems
 keep_alive()
