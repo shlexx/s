@@ -127,7 +127,7 @@ async def fatheriwishtomessage(interaction: discord.Interaction, message: str, p
 async def fatheriwishtoreceiveakey(interaction: discord.Interaction):
     chars = "qwertyuiopasdfghjklzcvbnmQWERTYUIOPASDFGHJKLZCVBNM1234567890"
     random_str = ''.join(random.choice(chars) for _ in range(length))
-    await interaction.response.send_message(f"your key:\n`{random_str}`", ephemeral=True)
+    await interaction.response.send_message(f"your key: ||{random_str}||", ephemeral=True)
 
 # Start systems
 keep_alive()
