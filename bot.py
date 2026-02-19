@@ -121,33 +121,35 @@ async def fatheriwishtovanish(interaction: discord.Interaction):
 async def fatheriwishtomessage(interaction: discord.Interaction, message: str, private: bool = False):
     await interaction.response.send_message(message, ephemeral=private)
 
-@client.tree.command(name="fatheriwishtoreceivekeys", description="father i wish to recieve keys")
+@client.tree.command(name="fatheriwishtoreceivekeys", description="father i wish to receive keys")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def fatheriwishtoreceivekeys(interaction: discord.Interaction, amount: int = 1, letters: bool = True, numbers: bool = True, symbols: bool = False, format_as_license: bool = False, block_size: int = 4, dash_count: int = 2):
+async def fatheriwishtoreceivekeys(
+    interaction: discord.Interaction, 
+    amount: int = 1, 
+    uppercase: bool = True,
+    lowercase: bool = True,
+    numbers: bool = True, 
+    symbols: bool = False,
+    format_as_license: bool = False,
+    block_size: int = 4,
+    dash_count: int = 2
+):
     amount = max(1, min(amount, 10))
-    block_size = max(1, min(block_size, 10))
-    dash_count = max(0, min(dash_count, 10))
-    char_pool = ""
-    if letters:
-        char_pool += string.ascii_uppercase
-    if numbers:
-        char_pool += string.digits
-    if symbols:
-        char_pool += "!@#$%^&*"
-    if not char_pool:
-        char_pool = string.ascii_uppercase
-    generated_keys = []
+    pool = ""
+    if uppercase: pool += string.ascii_uppercase
+    if lowercase: pool += string.ascii_lowercase
+    if numbers: pool += string.digits
+    if symbols: pool += "!@#$%^&*"
+    if not pool: pool = string.ascii_uppercase
+    keys = []
     for _ in range(amount):
         if format_as_license:
-            total_blocks = dash_count + 1
-            blocks = [''.join(secrets.choice(char_pool) for _ in range(block_size)) for _ in range(total_blocks)]
-            generated_keys.append("-".join(blocks))
+            res = "-".join(''.join(secrets.choice(pool) for _ in range(block_size)) for _ in range(dash_count + 1))
         else:
-            key = ''.join(secrets.choice(char_pool) for _ in range(16))
-            generated_keys.append(key)
-    response_text = "\n".join(generated_keys)
-    await interaction.response.send_message(f"your generated keys:\n```\n{response_text}\n```", ephemeral=True)
+            res = ''.join(secrets.choice(pool) for _ in range(16))
+        keys.append(res)
+    await interaction.response.send_message(f"```\n{chr(10).join(keys)}\n```", ephemeral=True)
 
 # Start systems
 keep_alive()
