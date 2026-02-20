@@ -11,23 +11,25 @@ from keep_alive import keep_alive
 async def fetch_tiktok_region(username):
     try:
         browser = await uc.start(
-            headless=True, 
+            headless=True,
             args=[
-                "--no-sandbox", 
-                "--disable-setuid-sandbox", 
-                "--disable-dev-shm-usage",
-                "--disable-gpu",
-                "--no-first-run",
-                "--no-zygote"
-                "--proxy-server=http://31.59.20.176:6754"
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-blink-features=AutomationControlled", # Hides that this is a bot
+                "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" # Fake a real Mac
             ]
         )
         page = await browser.get(f"https://www.tiktok.com/@{username}")
-        script_data = await page.evaluate("JSON.parse(document.getElementById('__UNIVERSAL_DATA_FOR_REHYDRATION__').textContent)")
+        await page.sleep(7) 
+        script_data = await page.evaluate("document.getElementById('__UNIVERSAL_DATA_FOR_REHYDRATION__')?.textContent")
         await browser.stop()
-        user_info = script_data['__DEFAULT_SCOPE__']['webapp.user-detail']['userInfo']['user']
-        return user_info.get('region', 'unknown')
+        if not script_data:
+            print("TikTok returned a blank script tag. IP is likely flagged.")
+            return "unknown (blocked)"
+        data = json.loads(script_data)
+        return data['__DEFAULT_SCOPE__']['webapp.user-detail']['userInfo']['user']['region']
     except Exception as e:
+        print(f"Detailed Error: {e}")
         return "unknown"
 
 class MyBot(discord.Client):
