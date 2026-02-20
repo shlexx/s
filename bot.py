@@ -4,22 +4,45 @@ import os
 import random
 import string
 import secrets
-import yt_dlp
+import nodriver as uc
 from keep_alive import keep_alive
+
+async def fetch_tiktok_region(username):
+    try:
+        browser = await uc.start(headless=True, args=["--no-sandbox", "--disable-setuid-sandbox"])
+        page = await browser.get(f"https://www.tiktok.com/@{username}")
+        script_data = await page.evaluate("JSON.parse(document.getElementById('__UNIVERSAL_DATA_FOR_REHYDRATION__').textContent)")
+        await browser.stop()
+        user_info = script_data['__DEFAULT_SCOPE__']['webapp.user-detail']['userInfo']['user']
+        return user_info.get('region', 'unknown')
+    except Exception as e:
+        return "unknown"
 
 class MyBot(discord.Client):
     def __init__(self):
         intents = discord.Intents.default()
-        # Required for reading message content if you ever add prefix commands
         intents.message_content = True 
         super().__init__(intents=intents)
         self.tree = app_commands.CommandTree(self)
 
     async def setup_hook(self):
         await self.tree.sync()
-        print(f"Synced slash commands for {self.user}")
+        print(f"synced slash commands for {self.user}")
 
 client = MyBot()
+
+@client.tree.command(name="fatheriwishtogatuc", description="father i wish to get a tiktok user's country")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtogatuc(interaction: discord.Interaction, username: str):
+    await interaction.response.defer(thinking=True)
+    clean_name = username.lstrip('@')
+    region = await fetch_tiktok_region(clean_name)
+    
+    if region != "unknown":
+        await interaction.followup.send(f"🌍 **@{clean_name}** is registered in: **{region}**")
+    else:
+        await interaction.followup.send(f"couldn't find the region for @{clean_name}. they might be private or blocked.")
 
 @client.tree.command(name="fatheriwishtoflip", description="father i wish to flip")
 @app_commands.allowed_installs(guilds=True, users=True)
@@ -49,37 +72,23 @@ async def fatheriwishtogamble(interaction: discord.Interaction, minimum: int, ma
 @client.tree.command(name="fatheriwishtodecide", description="choose between paths")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def fatheriwishtodecide(
-    interaction: discord.Interaction, 
-    pick1: str, pick2: str, 
-    pick3: str = None, pick4: str = None, pick5: str = None
-):
+async def fatheriwishtodecide(interaction: discord.Interaction, pick1: str, pick2: str, pick3: str = None, pick4: str = None, pick5: str = None):
     all_picks = [p for p in [pick1, pick2, pick3, pick4, pick5] if p is not None]
     await interaction.response.send_message(f"the heavens have spoken: **{random.choice(all_picks)}**")
 
-# --- PREDICT / 8-BALL COMMAND ---
 @client.tree.command(name="fatheriwishtopredict", description="ask the heavens a question")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def fatheriwishtopredict(interaction: discord.Interaction, question: str):
-    responses = [
-        "yes.",
-        "no.",
-        "maybe.",
-        "maybe not.",
-        "i don't know."
-    ]
-    
+    responses = ["yes.", "no.", "maybe.", "maybe not.", "i don't know."]
     answer = random.choice(responses)
-    
-    # sending everything in lowercase as requested
     await interaction.response.send_message(f"question: {question.lower()}\nthe heavens say: {answer}")
 
 @client.tree.command(name="fatheriwishtodoom", description="father i wish to doom")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def fatheriwishtomeinkampf(interaction: discord.Interaction):
-    await interaction.response.send_message("send this in chat:\n```https://doom.p2r3.com/i.webp```")
+async def fatheriwishtodoom(interaction: discord.Interaction):
+    await interaction.response.send_message("send this in chat:\n```[https://doom.p2r3.com/i.webp](https://doom.p2r3.com/i.webp)```")
 
 @client.tree.command(name="fatheriwishtosummonkimjongun", description="father i wish to summon kim jong un")
 @app_commands.allowed_installs(guilds=True, users=True)
@@ -126,17 +135,7 @@ async def fatheriwishtomessage(interaction: discord.Interaction, message: str, p
 @client.tree.command(name="fatheriwishtoreceivekeys", description="father i wish to receive keys")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def fatheriwishtoreceivekeys(
-    interaction: discord.Interaction, 
-    amount: int = 1, 
-    uppercase: bool = True,
-    lowercase: bool = True,
-    numbers: bool = True, 
-    symbols: bool = False,
-    format_as_license: bool = False,
-    block_size: int = 4,
-    dash_count: int = 2
-):
+async def fatheriwishtoreceivekeys(interaction: discord.Interaction, amount: int = 1, uppercase: bool = True, lowercase: bool = True, numbers: bool = True, symbols: bool = False, format_as_license: bool = False, block_size: int = 4, dash_count: int = 2):
     amount = max(1, min(amount, 10))
     pool = ""
     if uppercase: pool += string.ascii_uppercase
@@ -164,15 +163,6 @@ async def inshallahiwishtobomb(interaction: discord.Interaction):
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def fatheriwishtoplmir(interaction: discord.Interaction):
     await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/labubu.gif")
-
-@client.tree.command(name="fatheriwishtogatuc", description="father i wish to get a tiktok user's country")
-@app_commands.allowed_installs(guilds=True, users=True)
-@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def fatheriwishtogatuc(interaction: discord.Interaction, url: str):
-    with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
-        info = ydl.extract_info(url, download=False)
-        region = info.get('region') or info.get('location') or "unknown"
-        await interaction.response.send_message(f"the users country/region is: **{region}** (could be incorrect)")
 
 @client.tree.command(name="fatheriwishtorap", description="father i wish to rap")
 @app_commands.allowed_installs(guilds=True, users=True)
