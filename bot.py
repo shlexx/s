@@ -5,7 +5,6 @@ import os
 import random
 import string
 import secrets
-import requests
 from keep_alive import keep_alive
 
 class MyBot(discord.Client):
