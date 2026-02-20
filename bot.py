@@ -5,32 +5,40 @@ import os
 import random
 import string
 import secrets
-import nodriver as uc
+import requests
 from keep_alive import keep_alive
 
-async def fetch_tiktok_region(username):
+def get_tiktok_region(username):
+    username = username.replace('@', '')
+    
+    url = f"https://countik.com/api/userinfo?username={username}"
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Referer": "https://countik.com/tiktok-user-analytics"
+    }
+
     try:
-        browser = await uc.start(
-            headless=True,
-            args=[
-                "--no-sandbox",
-                "--disable-setuid-sandbox",
-                "--disable-blink-features=AutomationControlled", # Hides that this is a bot
-                "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" # Fake a real Mac
-            ]
-        )
-        page = await browser.get(f"https://www.tiktok.com/@{username}")
-        await page.sleep(7) 
-        script_data = await page.evaluate("document.getElementById('__UNIVERSAL_DATA_FOR_REHYDRATION__')?.textContent")
-        await browser.stop()
-        if not script_data:
-            print("TikTok returned a blank script tag. IP is likely flagged.")
-            return "unknown (blocked)"
-        data = json.loads(script_data)
-        return data['__DEFAULT_SCOPE__']['webapp.user-detail']['userInfo']['user']['region']
+        response = requests.get(url, headers=headers, timeout=10)
+        data = response.json()
+        
+        if data.get("status") == "success":
+            user_info = data.get("user", {})
+            region = user_info.get("region", "Unknown")
+            nickname = user_info.get("nickname", "Unknown")
+            
+            return {
+                "username": username,
+                "nickname": nickname,
+                "region": region,
+                "follower_count": user_info.get("followerCount"),
+                "is_verified": user_info.get("verified")
+            }
+        else:
+            return {"error": "User not found or API blocked."}
+            
     except Exception as e:
-        print(f"Detailed Error: {e}")
-        return "unknown"
+        return {"error": str(e)}
 
 class MyBot(discord.Client):
     def __init__(self):
@@ -183,6 +191,23 @@ async def fatheriwishtoplmir(interaction: discord.Interaction):
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def fatheriwishtorap(interaction: discord.Interaction):
     await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/rap.gif")
+
+@client.tree.command(name="fatheriwishtogatuc", description="father i wish to get a tiktok user's country")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtogatuc(interaction: discord.Interaction, username: str):
+    await interaction.response.defer(thinking=True)
+    result = get_tiktok_region(username)
+    if "error" in result:
+        await interaction.followup.send(f"**error:** {result['error']}")
+    else:
+        msg = (
+            f"**user:** {result['nickname']} (@{result['username']})\n"
+            f"**region:** `{result['region']}`\n"
+            f"**followers:** {result['follower_count']:,}\n"
+            f"**verified:** {'yes' if result['is_verified'] else 'no'}"
+        )
+        await interaction.followup.send(msg)
 
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
