@@ -19,6 +19,7 @@ async def fetch_tiktok_region(username):
                 "--disable-gpu",
                 "--no-first-run",
                 "--no-zygote"
+                "--proxy-server=http://31.59.20.176:6754"
             ]
         )
         page = await browser.get(f"https://www.tiktok.com/@{username}")
