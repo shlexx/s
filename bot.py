@@ -178,12 +178,18 @@ async def fatheriwishtorap(interaction: discord.Interaction):
 @client.tree.command(name="fatheriwishtotranslate", description="father i wish to translate")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-@app_commands.choices(mode=[
-    app_commands.Choice(name="morse code", value="morse"),
-    app_commands.Choice(name="base64", value="base64"),
-    app_commands.Choice(name="binary", value="binary"),
-    app_commands.Choice(name="hexadecimal", value="hex")
-])
+@app_commands.choices(
+    action=[
+        app_commands.Choice(name="encode", value="encode"),
+        app_commands.Choice(name="decode", value="decode")
+    ],
+    mode=[
+        app_commands.Choice(name="morse code", value="morse"),
+        app_commands.Choice(name="base64", value="base64"),
+        app_commands.Choice(name="binary", value="binary"),
+        app_commands.Choice(name="hexadecimal", value="hex")
+    ]
+)
 async def fatheriwishtotranslate(interaction: discord.Interaction, action: app_commands.Choice[str], mode: app_commands.Choice[str], text: str):
     result = process_data(text, mode.value, action.value)
     if result:
