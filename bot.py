@@ -181,15 +181,15 @@ async def fatheriwishtoplmir(interaction: discord.Interaction):
 async def fatheriwishtorap(interaction: discord.Interaction):
     await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/rap.gif")
 
-@client.tree.command(name="fatheriwishtotranslatemorse", description="father i wish to translate morse")
+@client.tree.command(name="fatheriwishtotranslate", description="father i wish to translate")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def fatheriwishtotranslatemorse(interaction: discord.Interaction, message: str):
-    encoded = text_to_morse(message)
-    if len(encoded) > 1900:
-        await interaction.response.send_message("the converted morse code is too long to send", ephemeral=True)
+async def fatheriwishtotranslate(interaction: discord.Interaction, mode: app_commands.Choice[str], text: str):
+    decoded_text = decode_data(text, mode.value)
+    if not decoded_text or decoded_text.strip() == "":
+        await interaction.response.send_message(f"failed to decode as {mode.name}. check your formatting!", ephemeral=True)
     else:
-        await interaction.response.send_message(f"**original:** {message}\n**morse:** `{encoded}`", ephemeral=True)
+        await interaction.response.send_message(f"**mode:** {mode.name}\n**decoded:** `{decoded_text}`", ephemeral=True)
 
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
