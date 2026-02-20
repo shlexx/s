@@ -9,7 +9,17 @@ from keep_alive import keep_alive
 
 async def fetch_tiktok_region(username):
     try:
-        browser = await uc.start(headless=True, args=["--no-sandbox", "--disable-setuid-sandbox"])
+        browser = await uc.start(
+            headless=True, 
+            args=[
+                "--no-sandbox", 
+                "--disable-setuid-sandbox", 
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--no-first-run",
+                "--no-zygote"
+            ]
+        )
         page = await browser.get(f"https://www.tiktok.com/@{username}")
         script_data = await page.evaluate("JSON.parse(document.getElementById('__UNIVERSAL_DATA_FOR_REHYDRATION__').textContent)")
         await browser.stop()
