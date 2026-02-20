@@ -6,7 +6,6 @@ import random
 import string
 import secrets
 import base64
-import requests
 from keep_alive import keep_alive
 
 MORSE_CODE_DICT_REVERSE = {
