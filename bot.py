@@ -8,7 +8,16 @@ import secrets
 import requests
 from keep_alive import keep_alive
 
-import requests
+class MyBot(discord.Client):
+    def __init__(self):
+        intents = discord.Intents.default()
+        intents.message_content = True 
+        super().__init__(intents=intents)
+        self.tree = app_commands.CommandTree(self)
+
+    async def setup_hook(self):
+        await self.tree.sync()
+        print(f"Synced slash commands for {self.user}")
 
 def get_tiktok_region(username):
     username = username.replace('@', '')
