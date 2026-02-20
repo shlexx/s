@@ -4,6 +4,7 @@ import os
 import random
 import string
 import secrets
+import yt_dlp
 from keep_alive import keep_alive
 
 class MyBot(discord.Client):
@@ -164,6 +165,14 @@ async def inshallahiwishtobomb(interaction: discord.Interaction):
 async def fatheriwishtoplmir(interaction: discord.Interaction):
     await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/labubu.gif")
 
-# Start systems
+@client.tree.command(name="fatheriwishtogatuc", description="father i wish to get a tiktok user's country")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtogatuc(interaction: discord.Interaction, url: str):
+    with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
+        info = ydl.extract_info(url, download=False)
+        region = info.get('region') or info.get('location') or "unknown"
+        await interaction.response.send_message(f"the users country/region is: **{region}** (could be incorrect)")
+
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
