@@ -8,38 +8,33 @@ import secrets
 import base64
 from keep_alive import keep_alive
 
-MORSE_CODE_DICT_REVERSE = {
-    '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E', '..-.': 'F',
-    '--.': 'G', '....': 'H', '..': 'I', '.---': 'J', '-.-': 'K', '.-..': 'L',
-    '--': 'M', '-.': 'N', '---': 'O', '.--.': 'P', '--.-': 'Q', '.-.': 'R',
-    '...': 'S', '-': 'T', '..-': 'U', '...-': 'V', '.--': 'W', '-..-': 'X',
-    '-.--': 'Y', '--..': 'Z', '.----': '1', '..---': '2', '...--': '3',
-    '....-': '4', '.....': '5', '-....': '6', '--...': '7', '---..': '8',
-    '----.': '9', '-----': '0', '--..--': ',', '.-.-.-': '.', '..--..': '?',
-    '-..-.': '/', '-....-': '-', '-.--.': '(', '-.--.-': ')', '/': ' '
+MORSE_MAP = {
+    'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+    'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+    'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+    'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+    'Y': '-.--', 'Z': '--..', '1': '.----', '2': '..---', '3': '...--',
+    '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..',
+    '9': '----.', '0': '-----', ',': '--..--', '.': '.-.-.-', '?': '..--..',
+    '/': '-..-.', '-': '-....-', '(': '-.--.', ')': '-.--.-', ' ': '/'
 }
+MORSE_REVERSE = {v: k for k, v in MORSE_MAP.items()}
 
-def decode_data(text, mode):
+def process_data(text, mode, action):
     try:
-        if mode == "base64":
-            return base64.b64decode(text).decode('utf-8')
+        if action == "encode":
+            if mode == "base64": return base64.b64encode(text.encode()).decode()
+            if mode == "binary": return ' '.join(format(ord(c), '08b') for c in text)
+            if mode == "hex":    return text.encode().hex(' ')
+            if mode == "morse":  return ' '.join(MORSE_MAP.get(c.upper(), '') for c in text).replace(' / ', ' / ')
         
-        elif mode == "binary":
-            binary_values = text.replace(" ", "")
-            return ''.join(chr(int(binary_values[i:i+8], 2)) for i in range(0, len(binary_values), 8))
-        
-        elif mode == "hex":
-            return bytes.fromhex(text.replace(" ", "")).decode('utf-8')
-        
-        elif mode == "morse":
-            words = text.split(' / ')
-            decoded_words = []
-            for word in words:
-                letters = word.split(' ')
-                decoded_words.append(''.join(MORSE_CODE_DICT_REVERSE.get(l, '') for l in letters))
-            return ' '.join(decoded_words)
-    except Exception:
-        return None
+        else:
+            if mode == "base64": return base64.b64decode(text).decode()
+            if mode == "binary": return ''.join(chr(int(b, 2)) for b in text.replace(" ", "").split()) # Basic binary fix
+            if mode == "hex":    return bytes.fromhex(text.replace(" ", "")).decode()
+            if mode == "morse":
+                return ' '.join(''.join(MORSE_REVERSE.get(l, '') for l in w.split()) for w in text.split(' / '))
+    except: return None
 
 class MyBot(discord.Client):
     def __init__(self):
@@ -183,12 +178,18 @@ async def fatheriwishtorap(interaction: discord.Interaction):
 @client.tree.command(name="fatheriwishtotranslate", description="father i wish to translate")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def fatheriwishtotranslate(interaction: discord.Interaction, mode: app_commands.Choice[str], text: str):
-    decoded_text = decode_data(text, mode.value)
-    if not decoded_text or decoded_text.strip() == "":
-        await interaction.response.send_message(f"failed to decode as {mode.name}. check your formatting!", ephemeral=True)
+@app_commands.choices(mode=[
+    app_commands.Choice(name="morse code", value="morse"),
+    app_commands.Choice(name="base64", value="base64"),
+    app_commands.Choice(name="binary", value="binary"),
+    app_commands.Choice(name="hexadecimal", value="hex")
+])
+async def fatheriwishtotranslate(interaction: discord.Interaction, action: app_commands.Choice[str], mode: app_commands.Choice[str], text: str):
+    result = process_data(text, mode.value, action.value)
+    if result:
+        await interaction.response.send_message(f"**{action.name}** using **{mode.name}**:\n`{result}`", ephemeral=True)
     else:
-        await interaction.response.send_message(f"**mode:** {mode.name}\n**decoded:** `{decoded_text}`", ephemeral=True)
+        await interaction.response.send_message(f"couldn't {action.value} that text. check your format!", ephemeral=True)
 
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
