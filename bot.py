@@ -158,6 +158,12 @@ async def fatheriwishtoreceivekeys(
 async def inshallahiwishtobomb(interaction: discord.Interaction):
     await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/hover.gif")
 
+@client.tree.command(name="fatheriwishtoplantlabubumarijuanainromania", description="father i wish to plant labubu marijuana in romania")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtoplantlabubumarijuanainromania(interaction: discord.Interaction):
+    await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/labubu.gif")
+
 # Start systems
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
