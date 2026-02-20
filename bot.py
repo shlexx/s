@@ -8,63 +8,34 @@ import secrets
 import requests
 from keep_alive import keep_alive
 
+import requests
+
 def get_tiktok_region(username):
     username = username.replace('@', '')
-    
-    url = f"https://countik.com/api/userinfo?username={username}"
-    
+    url = f"https://api16-normal-c-useast1a.tiktokv.com/aweme/v1/multi/user/info/?unique_id_list=[%22{username}%22]"
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Referer": "https://countik.com/tiktok-user-analytics"
+        "User-Agent": "com.zhiliaoapp.musically/2022405040 (Linux; U; Android 12; en_US; Pixel 6; Build/SQ3A.220705.004; Cronet/58.0.2991.0)",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive"
     }
-
     try:
         response = requests.get(url, headers=headers, timeout=10)
         data = response.json()
-        
-        if data.get("status") == "success":
-            user_info = data.get("user", {})
-            region = user_info.get("region", "Unknown")
-            nickname = user_info.get("nickname", "Unknown")
-            
+        if data.get("user_list"):
+            user = data["user_list"][0]
             return {
                 "username": username,
-                "nickname": nickname,
-                "region": region,
-                "follower_count": user_info.get("followerCount"),
-                "is_verified": user_info.get("verified")
+                "nickname": user.get("nickname", "Unknown"),
+                "region": user.get("region", "Unknown"),
+                "follower_count": user.get("follower_count", 0),
+                "is_verified": user.get("custom_verify") != ""
             }
         else:
-            return {"error": "User not found or API blocked."}
-            
+            return {"error": "User not found or account is restricted."}
     except Exception as e:
-        return {"error": str(e)}
-
-class MyBot(discord.Client):
-    def __init__(self):
-        intents = discord.Intents.default()
-        intents.message_content = True 
-        super().__init__(intents=intents)
-        self.tree = app_commands.CommandTree(self)
-
-    async def setup_hook(self):
-        await self.tree.sync()
-        print(f"synced slash commands for {self.user}")
+        return {"error": f"Connection Error: {str(e)}"}
 
 client = MyBot()
-
-@client.tree.command(name="fatheriwishtogatuc", description="father i wish to get a tiktok user's country")
-@app_commands.allowed_installs(guilds=True, users=True)
-@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def fatheriwishtogatuc(interaction: discord.Interaction, username: str):
-    await interaction.response.defer(thinking=True)
-    clean_name = username.lstrip('@')
-    region = await fetch_tiktok_region(clean_name)
-    
-    if region != "unknown":
-        await interaction.followup.send(f"🌍 **@{clean_name}** is registered in: **{region}**")
-    else:
-        await interaction.followup.send(f"couldn't find the region for @{clean_name}. they might be private or blocked.")
 
 @client.tree.command(name="fatheriwishtoflip", description="father i wish to flip")
 @app_commands.allowed_installs(guilds=True, users=True)
