@@ -174,5 +174,11 @@ async def fatheriwishtogatuc(interaction: discord.Interaction, url: str):
         region = info.get('region') or info.get('location') or "unknown"
         await interaction.response.send_message(f"the users country/region is: **{region}** (could be incorrect)")
 
+@client.tree.command(name="fatheriwishtorap", description="father i wish to rap")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtorap(interaction: discord.Interaction):
+    await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/rap.gif")
+
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
