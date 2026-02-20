@@ -5,26 +5,42 @@ import os
 import random
 import string
 import secrets
+import base64
+import requests
 from keep_alive import keep_alive
 
-MORSE_CODE_DICT = {
-    'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
-    'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
-    'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
-    'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
-    'Y': '-.--', 'Z': '--..', '1': '.----', '2': '..---', '3': '...--',
-    '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..',
-    '9': '----.', '0': '-----', ',': '--..--', '.': '.-.-.-', '?': '..--..',
-    '/': '-..-.', '-': '-....-', '(': '-.--.', ')': '-.--.-', ' ': '/'
+MORSE_CODE_DICT_REVERSE = {
+    '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E', '..-.': 'F',
+    '--.': 'G', '....': 'H', '..': 'I', '.---': 'J', '-.-': 'K', '.-..': 'L',
+    '--': 'M', '-.': 'N', '---': 'O', '.--.': 'P', '--.-': 'Q', '.-.': 'R',
+    '...': 'S', '-': 'T', '..-': 'U', '...-': 'V', '.--': 'W', '-..-': 'X',
+    '-.--': 'Y', '--..': 'Z', '.----': '1', '..---': '2', '...--': '3',
+    '....-': '4', '.....': '5', '-....': '6', '--...': '7', '---..': '8',
+    '----.': '9', '-----': '0', '--..--': ',', '.-.-.-': '.', '..--..': '?',
+    '-..-.': '/', '-....-': '-', '-.--.': '(', '-.--.-': ')', '/': ' '
 }
 
-def text_to_morse(text):
-    text = text.upper()
-    morse = []
-    for char in text:
-        if char in MORSE_CODE_DICT:
-            morse.append(MORSE_CODE_DICT[char])
-    return " ".join(morse)
+def decode_data(text, mode):
+    try:
+        if mode == "base64":
+            return base64.b64decode(text).decode('utf-8')
+        
+        elif mode == "binary":
+            binary_values = text.replace(" ", "")
+            return ''.join(chr(int(binary_values[i:i+8], 2)) for i in range(0, len(binary_values), 8))
+        
+        elif mode == "hex":
+            return bytes.fromhex(text.replace(" ", "")).decode('utf-8')
+        
+        elif mode == "morse":
+            words = text.split(' / ')
+            decoded_words = []
+            for word in words:
+                letters = word.split(' ')
+                decoded_words.append(''.join(MORSE_CODE_DICT_REVERSE.get(l, '') for l in letters))
+            return ' '.join(decoded_words)
+    except Exception:
+        return None
 
 class MyBot(discord.Client):
     def __init__(self):
