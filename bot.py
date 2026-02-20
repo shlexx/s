@@ -7,6 +7,25 @@ import string
 import secrets
 from keep_alive import keep_alive
 
+MORSE_CODE_DICT = {
+    'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+    'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+    'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+    'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+    'Y': '-.--', 'Z': '--..', '1': '.----', '2': '..---', '3': '...--',
+    '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..',
+    '9': '----.', '0': '-----', ',': '--..--', '.': '.-.-.-', '?': '..--..',
+    '/': '-..-.', '-': '-....-', '(': '-.--.', ')': '-.--.-', ' ': '/'
+}
+
+def text_to_morse(text):
+    text = text.upper()
+    morse = []
+    for char in text:
+        if char in MORSE_CODE_DICT:
+            morse.append(MORSE_CODE_DICT[char])
+    return " ".join(morse)
+
 class MyBot(discord.Client):
     def __init__(self):
         intents = discord.Intents.default()
@@ -64,7 +83,7 @@ async def fatheriwishtopredict(interaction: discord.Interaction, question: str):
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def fatheriwishtodoom(interaction: discord.Interaction):
-    await interaction.response.send_message("send this in chat:\n```[https://doom.p2r3.com/i.webp](https://doom.p2r3.com/i.webp)```")
+    await interaction.response.send_message("send this in chat:\n```[https://doom.p2r3.com/i.webp](https://doom.p2r3.com/i.webp)```", ephemeral=True)
 
 @client.tree.command(name="fatheriwishtosummonkimjongun", description="father i wish to summon kim jong un")
 @app_commands.allowed_installs(guilds=True, users=True)
@@ -145,6 +164,16 @@ async def fatheriwishtoplmir(interaction: discord.Interaction):
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def fatheriwishtorap(interaction: discord.Interaction):
     await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/rap.gif")
+
+@client.tree.command(name="fatheriwishtotranslatemorse", description="father i wish to translate morse")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def fatheriwishtotranslatemorse(interaction: discord.Interaction, message: str):
+    encoded = text_to_morse(message)
+    if len(encoded) > 1900:
+        await interaction.response.send_message("the converted morse code is too long to send", ephemeral=True)
+    else:
+        await interaction.response.send_message(f"**original:** {message}\n**morse:** `{encoded}`", ephemeral=True)
 
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
