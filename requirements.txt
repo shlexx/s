@@ -1,4 +1,4 @@
 discord.py
-nodriver==0.3.3
+nodriver==0.33
 flask
 requests
