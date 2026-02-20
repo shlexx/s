@@ -19,31 +19,6 @@ class MyBot(discord.Client):
         await self.tree.sync()
         print(f"Synced slash commands for {self.user}")
 
-def get_tiktok_region(username):
-    username = username.replace('@', '')
-    url = f"https://api16-normal-c-useast1a.tiktokv.com/aweme/v1/multi/user/info/?unique_id_list=[%22{username}%22]"
-    headers = {
-        "User-Agent": "com.zhiliaoapp.musically/2022405040 (Linux; U; Android 12; en_US; Pixel 6; Build/SQ3A.220705.004; Cronet/58.0.2991.0)",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive"
-    }
-    try:
-        response = requests.get(url, headers=headers, timeout=10)
-        data = response.json()
-        if data.get("user_list"):
-            user = data["user_list"][0]
-            return {
-                "username": username,
-                "nickname": user.get("nickname", "Unknown"),
-                "region": user.get("region", "Unknown"),
-                "follower_count": user.get("follower_count", 0),
-                "is_verified": user.get("custom_verify") != ""
-            }
-        else:
-            return {"error": "User not found or account is restricted."}
-    except Exception as e:
-        return {"error": f"Connection Error: {str(e)}"}
-
 client = MyBot()
 
 @client.tree.command(name="fatheriwishtoflip", description="father i wish to flip")
@@ -171,23 +146,6 @@ async def fatheriwishtoplmir(interaction: discord.Interaction):
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def fatheriwishtorap(interaction: discord.Interaction):
     await interaction.response.send_message("https://raw.githubusercontent.com/shlexx/gif/refs/heads/main/rap.gif")
-
-@client.tree.command(name="fatheriwishtogatuc", description="father i wish to get a tiktok user's country")
-@app_commands.allowed_installs(guilds=True, users=True)
-@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def fatheriwishtogatuc(interaction: discord.Interaction, username: str):
-    await interaction.response.defer(thinking=True)
-    result = get_tiktok_region(username)
-    if "error" in result:
-        await interaction.followup.send(f"**error:** {result['error']}")
-    else:
-        msg = (
-            f"**user:** {result['nickname']} (@{result['username']})\n"
-            f"**region:** `{result['region']}`\n"
-            f"**followers:** {result['follower_count']:,}\n"
-            f"**verified:** {'yes' if result['is_verified'] else 'no'}"
-        )
-        await interaction.followup.send(msg)
 
 keep_alive()
 client.run(os.environ['DISCORD_TOKEN'])
