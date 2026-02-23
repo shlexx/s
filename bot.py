@@ -93,7 +93,7 @@ async def fatheriwishtopredict(interaction: discord.Interaction, question: str):
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def fatheriwishtodoom(interaction: discord.Interaction):
-    await interaction.response.send_message("send this in chat:\n```[https://doom.p2r3.com/i.webp](https://doom.p2r3.com/i.webp)```", ephemeral=True)
+    await interaction.response.send_message("send this in chat:\n```https://doom.p2r3.com/i.webp```", ephemeral=True)
 
 @client.tree.command(name="fatheriwishtosummonkimjongun", description="father i wish to summon kim jong un")
 @app_commands.allowed_installs(guilds=True, users=True)
